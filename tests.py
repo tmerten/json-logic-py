@@ -7,6 +7,8 @@ import json
 import logging
 import unittest
 
+import six
+
 try:
     from urllib.request import urlopen
 except ImportError:
