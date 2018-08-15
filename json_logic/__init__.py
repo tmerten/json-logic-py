@@ -6,7 +6,7 @@ https://github.com/jwadhams/json-logic-js
 # Python 2 fallbacks
 from __future__ import division, unicode_literals
 
-from six import text_type, integer_types, advance_iterator
+from six import advance_iterator, integer_types, text_type
 from six.moves import reduce
 
 numeric_types = integer_types + (float,)
@@ -96,13 +96,9 @@ def _expose_operations():
     return operations
 
 
-def _not_none(fn):
-    def wrapped(*args):
-        if len(args) > 1 and all([arg is None for arg in args]):
-            return False
-        return fn(*args)
-
-    return wrapped
+def _is_none(arg):
+    """Check if argument is None."""
+    return arg is None
 
 
 # Common operations
@@ -141,7 +137,6 @@ def _not_strict_equal_to(a, b):
     return not _strict_equal_to(a, b)
 
 
-@_not_none
 def _less_than(a, b, c=_no_argument):
     """
     Check that A is less then B (A < B) or
@@ -152,6 +147,8 @@ def _less_than(a, b, c=_no_argument):
     So {"<": ["11", 2, "3"]} will evaluate to False,
     while {"<": ["11", "2", 3]} will evaluate to True.
     """
+    if _is_none(a) or _is_none(b):
+        return False
     if _is_numeric(a) or _is_numeric(b):
         try:
             a, b = _to_numeric(a), _to_numeric(b)
@@ -160,7 +157,6 @@ def _less_than(a, b, c=_no_argument):
     return a < b and (c is _no_argument or _less_than(b, c))
 
 
-@_not_none
 def _less_than_or_equal_to(a, b, c=_no_argument):
     """
     Check that A is less then or equal to B (A <= B) or
@@ -176,13 +172,11 @@ def _less_than_or_equal_to(a, b, c=_no_argument):
         (c is _no_argument or _less_than_or_equal_to(b, c))
 
 
-@_not_none
 def _greater_than(a, b):
     """Check that A is greater then B (A > B)."""
     return _less_than(b, a)
 
 
-@_not_none
 def _greater_than_or_equal_to(a, b):
     """Check that A is greater then or equal to B (A >= B)."""
     return _less_than_or_equal_to(b, a)
