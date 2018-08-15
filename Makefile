@@ -3,3 +3,6 @@ release:
 
 clean:
 	rm -rf build dist json_logic_qubit.egg-info
+
+test:
+	python -m unittest tests.py
