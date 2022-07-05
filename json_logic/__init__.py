@@ -5,6 +5,7 @@ https://github.com/jwadhams/json-logic-js
 
 # Python 2 fallbacks
 from __future__ import division, unicode_literals
+from decimal import Decimal
 
 from six import advance_iterator, integer_types, text_type
 from six.moves import reduce
@@ -61,10 +62,13 @@ def _to_numeric(arg):
     Convert a string or other value  into float, integer or long.
     Convert float value to integer if appropriate.
     """
+    print(f'to numeric {arg} {type(arg)}')
     if _is_string(arg) and '.' in arg:
         arg = float(arg)
     if isinstance(arg, float):
         return int(arg) if arg.is_integer() else arg
+    if isinstance(arg, Decimal):
+        return int(arg) if arg == int(arg) else float(arg)
     return int(arg)
 
 

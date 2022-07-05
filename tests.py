@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 import datetime
+from decimal import Decimal
 import json
 import logging
 import unittest
@@ -182,6 +183,10 @@ class AdditionalJsonLogicTests(unittest.TestCase):
         self.assertIs(jsonLogic({'===': [1, 1]}), True)
         self.assertIs(jsonLogic({'===': [1.23, 1.23]}), True)
         self.assertIs(jsonLogic({'===': [1, 1.0]}), True)
+        self.assertIs(jsonLogic({'===': [1, Decimal(1)]}), False)
+        self.assertIs(jsonLogic({'===': [1, Decimal(1.0)]}), False)
+        self.assertIs(jsonLogic({'==': [1, Decimal(1)]}), True)
+        self.assertIs(jsonLogic({'==': [1, Decimal(1.0)]}), True)
         self.assertIs(
             jsonLogic({'===': [10000000000000000000, 10000000000000000000.0]}),
             True)
@@ -189,6 +194,8 @@ class AdditionalJsonLogicTests(unittest.TestCase):
     def test_less_then_type_coercion_peculiarities(self):
         self.assertIs(jsonLogic({'<': ["11", 2, "3"]}), False)
         self.assertIs(jsonLogic({'<': ["11", "2", 3]}), True)
+        self.assertIs(jsonLogic({'<': [Decimal(3.001), 3]}), False)
+        self.assertIs(jsonLogic({'>': [Decimal(3.001), 3]}), True)
 
     def test_less_then_or_equal_to_type_coercion_peculiarities(self):
         self.assertIs(jsonLogic({'<=': ["11", 2, "3"]}), False)
