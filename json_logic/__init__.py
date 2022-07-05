@@ -62,7 +62,6 @@ def _to_numeric(arg):
     Convert a string or other value  into float, integer or long.
     Convert float value to integer if appropriate.
     """
-    print(f'to numeric {arg} {type(arg)}')
     if _is_string(arg) and '.' in arg:
         arg = float(arg)
     if isinstance(arg, float):
